@@ -1,0 +1,245 @@
+実際に動かしたい場合は、xamppのコントロ―ルパネルからapache.のconfig http.conf
+DocumentRootで検索
+xampp設定変更情報　67行目に詳細
+
+ER図作成サービス dbdiagram
+https://dbdiagram.io/home
+
+cacoo.comを利用して、一覧画面のCSVエクスポートボタンをクリックしてから、CSVファイルをダウンロードの流れをかく
+https://cacoo.com/
+
+使用ライブラリ
+モーダル
+https://github.com/VodkaBears/Remodal/
+
+pickere
+https://github.com/flatpickr/flatpickr
+
+1 XAMPP本体をダウンロード PHP7.4
+2 composer https://getcomposer.org/ Download compsoser-Setup.exec をクリック
+  XAMPPのShell composer -v
+3. C:\ProgramData\ComposerSetup\bin を環境変数に設定　Windows左下の検索に sysdm.cpl
+4.https://nodejs.org/ja/download/をダウンロード node -v npm -v
+
+5.Visual Studio Code」をダウンロード
+6.検索ボックスに「settings.json」と入力してEnterキーを押すと、「Edit in settings.json」というリンクが表示
+
+●jsonファイルに追加
+　{
+    // 差分を横に並べて表示せずに、行内に表示する
+    "diffEditor.renderSideBySide": false,
+    // ファイル保存時に自動フォーマットする
+    "editor.formatOnSave": true,
+    // 現在の行を強調表示する
+    "editor.renderLineHighlight": "all",
+    // 空白文字を表示する
+    "editor.renderWhitespace": "all",
+    // スペース2個分のインデント
+    "editor.tabSize": 2,
+    // ウィンドウ幅右端で折り返す
+    "editor.wordWrap": "on",
+    // ファイル保存時に新しい行を末尾に挿入する
+    "files.insertFinalNewline": true,
+    // アイコンテーマの指定
+    "workbench.iconTheme": "vscode-icons"
+}
+
+7.拡張機能追加
+● PHP Intelephense
+  → PHPのコード補完や定義への移動など様々な機能を提供。
+● Japanese Language Pack for Visual Studio Code
+  → VSCodeを日本語に対応したUIを提供。
+● vscode-icons
+  → ファイルやフォルダにアイコンを追加。
+
+8.フォルダを作る
+cd htdocs
+composer create-project "laravel/laravel=6.0.*" --prefer-dist csvexport
+
+
+
+9.アパッチの変更
+XAMPPコンソールのapache設定を変更します。
+config → Apache(httpd.conf)
+メモ帳で開かれたら、 ctrl + F でファイル内検索を行います。
+DocumentRoot と検索
+
+ここを変更するとapatchでstartで表示できる
+
+// ==========ここから削除する==========
+DocumentRoot "C:/xampp/htdocs"
+<Directory "C:/xampp/htdocs">
+// ==========ここまで削除する==========
+
+// ==========ここから追加する==========
+DocumentRoot "C:/xampp/htdocs/csvexport/public"
+<Directory "C:/xampp/htdocs/csvexport/public">
+// ==========ここまで追加する==========
+
+
+
+9.c:\xampp\htdocs\csvexport
+.env というファイルがあるので、そのファイルを編集
+
+// ==========ここから削除する==========
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+// ==========ここまで削除する==========
+// ==========ここから追加する==========
+DB_DATABASE=csvexport
+DB_USERNAME=root
+DB_PASSWORD=
+DB_SOCKET=/Applications/MAMP/tmp/mysql/mysql.sock
+// ==========ここまで追加する==========
+
+
+10.phpmyadmin
+DB名は csvexport 、文字コードは utf8-mb4 general_ci
+
+11.接続確認
+php artisan migrate
+
+12. マイグレーションファイルの作成
+php artisan make:migration  create_contacts_table --create=contacts
+php artisan make:migration  create_conditions_table --create=conditions
+php artisan make:migration  create_designs_table --create=designs
+
+database
+└── migrations
+    └── 日付_create_contacts_table.php
+　　└── 日付_create_conditions_table.php
+　　└── 日付_create_designs_table.php
+
+13.Seederファイルの作成
+php artisan make:seeder ContactsTableSeeder
+php artisan make:seeder ConditionsTableSeeder
+php artisan make:seeder DesignsTableSeeder
+
+database
+└── seeds
+    └── ContactsTableSeeder.php
+    └── ConditionsTableSeeder.php
+    └── DesignsTableSeeder.php
+    └── DatabaseSeeder.php
+
+
+ContactsTableSeeder.phpにcontactsテーブルにinsertできる情報を
+連想配列で
+ConditionsTableSeeder.phpも同じく
+DesignsTableSeeder.php
+
+
+jQueryで簡単にモーダルウィンドウを実装できるremodalとflatpickrというライブラリを用いて開発を進めていきます。
+
+
+13.PHPファイルで定義したテーブルを作成するために
+
+composer dump-autoload
+php artisan migrate
+
+14.では、続いてSeederを実行して初期データを挿入
+php artisan db:seed
+
+15. Laravel/uiの導入
+composer require laravel/ui "^1.2"
+
+php artisan ui vue --auth
+npm install
+npm audit fix --force →これで動かない場合は、githubからデータをuiを整える為のもの
+
+(node.jsを使っている理由は app.cssとapp.jsを得ることであるため)
+ /public/css/app.css
+https://github.com/uchidayuma/laravel-book-review/blob/master/public/css/app.css
+/public/js/app/js
+https://raw.githubusercontent.com/uchidayuma/laravel-book-review/master/public/js/app.js
+の2つのファイルを作成する
+
+￥xampp￥htdocs￥csvexport￥package.jsonを開き修正する
+反映させる npm run dev
+
+
+
+16.2. ルーティングの追加
+
+routes
+└── web.php
+17. コントローラーと一覧メソッドの作成
+php artisan make:model Contact
+php artisan make:controller ContactController
+
+app
+└── Http
+    └── Controllers
+        └──ContactController.php
+18.問い合わせ一覧表示用のView
+touch resources/views/index.blade.php
+
+resources
+└── views
+    └── index.blade.php
+19.
+CSVエクスポートには大きく分けて、以下2つの作業が必要になります。
+
+CSVファイルに必要なデータを集め、整形する（SQL）
+リクエストを出したユーザーにCSVファイルをダウンロードさせる
+app
+└── Http
+    └── Controllers
+        └──ContactController.php
+
+
+・データを集め整形する部分は getCsvData()として、モデルのメソッドに切り出し
+
+・fopenの引数に作成したCSVファイルを入れることでダウンロードを実現しています。
+ $stream = fopen('php://output','w');
+
+・stream_filter_prepend の引数に convert.iconv.utf-8/cp932//TRANSLIT を入れることで、UTF-8へ文字列を変換してマルチバイト文字が入っていても文字化けがでないように対策しています。
+・stream_filter_prepend($stream, 'convert.iconv.utf-8/cp932//TRANSLIT');
+
+・fputcsvはその名の通り、データをCSVとして書き込む関数です
+
+・レスポンスヘッダーはhttpリクエストに対する返答に付与する追加情報です。
+レスポンスヘッダーにContent-Typeとファイル名を指定するとCSVファイルとしてダウンロードできます。
+20.app
+└── Contact.phpの実装
+whereBetween文でカレンダーで指定された期間に絞り込んでいます。
+ YYYY-MM-DD hh:ss:ii で指定する必要があるので、str_replaceで置換
+
+21.
+resources
+└── views
+    └── layouts
+        └── app.blade.php
+
+子ViewファイルからCSSとJavaScriptを読み込めるようにレイアウトファイルに @yeild を追加しましょう
+
+22.ライブラリ導入
+https://github.com/VodkaBears/Remodal/
+https://github.com/flatpickr/flatpickr
+を使用
+resources
+└── views
+    └── index.blade.php
+
+23.CSVエクスポートモーダルの設置
+resources
+└── views
+    └── index.blade.php
+
+24.datepickerの実装
+モーダルが開いたので、モーダル内に設置したカレンダーを開くようにするため、JavaScriptを書く
+
+touch public/js/index.js
+public
+└── js
+    └── index.js
+index.jsを記述
+
+index.jsができたら、子Viewで読み込んでいきましょう
+resources
+└── views
+    └── index.blade.php
+
+実装を試す
+contactsテーブルのcreated_atに格納されている日付が入るようにエクスポート期間を指定してください。

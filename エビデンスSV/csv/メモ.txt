@@ -100,7 +100,7 @@ DB名は csvexport 、文字コードは utf8-mb4 general_ci
 11.接続確認
 php artisan migrate
 
-12. マイグレーションファイルの作成
+12. マイグレーションファイルの作成　テーブルを作成
 php artisan make:migration  create_contacts_table --create=contacts
 php artisan make:migration  create_conditions_table --create=conditions
 php artisan make:migration  create_designs_table --create=designs
@@ -111,7 +111,7 @@ database
 　　└── 日付_create_conditions_table.php
 　　└── 日付_create_designs_table.php
 
-13.Seederファイルの作成
+13.Seederファイルの作成　テーブルの中のデータを作る
 php artisan make:seeder ContactsTableSeeder
 php artisan make:seeder ConditionsTableSeeder
 php artisan make:seeder DesignsTableSeeder
@@ -128,6 +128,13 @@ ContactsTableSeeder.phpにcontactsテーブルにinsertできる情報を
 連想配列で
 ConditionsTableSeeder.phpも同じく
 DesignsTableSeeder.php
+
+DatabaseSeederで、まとめて反映さえる
+       $this->call(ContactsTableSeeder::class);
+        $this->call(ConditionsTableSeeder::class);
+        $this->call(DesignsTableSeeder::class);
+
+
 
 
 jQueryで簡単にモーダルウィンドウを実装できるremodalとflatpickrというライブラリを用いて開発を進めていきます。

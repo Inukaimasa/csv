@@ -207,8 +207,39 @@ app
 
 ・fputcsvはその名の通り、データをCSVとして書き込む関数です
 
+fputcsv($stream, $contact->csvHeader());
+    $results = $contact->getCsvData($post['start_date'], $post['end_date']);
+    if (empty($results[0])) {
+            fputcsv($stream, [
+                'データが存在しませんでした。',
+            ]);
+    } else {
+        foreach ($results as $row) {
+            fputcsv($stream, $contact->csvRow($row));
+        }
+    }
+    fclose($stream);
+
+
 ・レスポンスヘッダーはhttpリクエストに対する返答に付与する追加情報です。
 レスポンスヘッダーにContent-Typeとファイル名を指定するとCSVファイルとしてダウンロードできます。
+
+
+$results = $contact->getCsvData($post['start_date'], $post['end_date']);
+
+if (empty($results[0])) {
+        fputcsv($stream, [
+            'データが存在しませんでした。',
+        ]);
+} else {
+    foreach ($results as $row) {
+        fputcsv($stream, $contact->csvRow($row));
+    }
+}
+fclose($stream);
+
+
+
 20.app
 └── Contact.phpの実装
 whereBetween文でカレンダーで指定された期間に絞り込んでいます。
@@ -234,6 +265,9 @@ resources
 resources
 └── views
     └── index.blade.php
+
+
+
 
 24.datepickerの実装
 モーダルが開いたので、モーダル内に設置したカレンダーを開くようにするため、JavaScriptを書く

@@ -29,7 +29,8 @@ class CreateContactsTable extends Migration
             $table->string('memo');
             $table->string('private_memo');
             $table->tinyinteger('status')->default(1);
-            $table->timestamps();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 
